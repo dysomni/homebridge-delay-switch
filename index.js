@@ -16,7 +16,7 @@ function delaySwitch(log, config, api) {
   this.name             = config['name'];
   this.delay            = config['delay'];
   this.motionTime       = config['motionTime'] || 3000;
-  this.sensor           = config['sensor'] || true;
+  // this.sensor           = config['sensor'] || true;
   this.startOnReboot    = config['startOnReboot'] || true;
   this.timer;
   this.switchOn         = false;
@@ -64,21 +64,16 @@ delaySwitch.prototype.setOn = function (on, callback) {
     this.switchOn = true;
     clearTimeout(this.timer);
     this.timer = setTimeout(function() {
-      this.log('Timer finished');
+      this.motionTriggered = true;
+      this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(true);
+      this.log('Triggering Motion Sensor');
       setTimeout(function() {
+        this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
+        this.motionTriggered = false;
         this.switchService.getCharacteristic(Characteristic.On).updateValue(false);
         this.switchOn = false;
-      }.bind(this), this.motionTime + 3000)
-
-      if (this.sensor) {
-        this.motionTriggered = true;
-        this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(true);
-        this.log('Triggering Motion Sensor');
-        setTimeout(function() {
-          this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
-          this.motionTriggered = false;
-        }.bind(this), this.motionTime);
-      }
+        this.log('Timer finished');
+      }.bind(this), this.motionTime);
     }.bind(this), this.delay);
     callback();
     return;

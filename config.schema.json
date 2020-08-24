@@ -26,13 +26,6 @@
               "type": "integer",
               "default": 3000,
               "required": false
-          },
-            "sensor": {
-                "title": "Enable Extra Motion Sensor",
-                "description": "Disable if you have no use of the sensor and you're interested to use the switch only",
-                "type": "boolean",
-                "default": true,
-                "required": false
             },
             "startOnReboot": {
                 "title": "Turn ON when HomeBridge Restarts",
