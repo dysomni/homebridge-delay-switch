@@ -60,23 +60,21 @@ delaySwitch.prototype.getServices = function () {
 const timerOn = () => {
   this.switchOn = true;
   clearTimeout(this.timer);
-  this.timer = setTimeout(timerDone.bind(this), this.delay);
-}
+  this.timer = setTimeout(function() {
+    this.log('Timer finished');
+    this.switchService.getCharacteristic(Characteristic.On).updateValue(false);
+    this.switchOn = false;
 
-const timerDone = () => {
-  this.log('Timer finished');
-  this.switchService.getCharacteristic(Characteristic.On).updateValue(false);
-  this.switchOn = false;
-
-  if (this.sensor) {
-    this.motionTriggered = true;
-    this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(true);
-    this.log('Triggering Motion Sensor');
-    setTimeout(function() {
-      this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
-      this.motionTriggered = false;
-    }.bind(this), this.motionTime);
-  }
+    if (this.sensor) {
+      this.motionTriggered = true;
+      this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(true);
+      this.log('Triggering Motion Sensor');
+      setTimeout(function() {
+        this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
+        this.motionTriggered = false;
+      }.bind(this), this.motionTime);
+    }
+  }.bind(this), this.delay);
 }
 
 const timerOff = () => {
