@@ -57,45 +57,36 @@ delaySwitch.prototype.getServices = function () {
   return services;
 }
 
-const timerOn = () => {
-  this.switchOn = true;
-  clearTimeout(this.timer);
-  this.timer = setTimeout(function() {
-    this.log('Timer finished');
-    this.switchService.getCharacteristic(Characteristic.On).updateValue(false);
-    this.switchOn = false;
-
-    if (this.sensor) {
-      this.motionTriggered = true;
-      this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(true);
-      this.log('Triggering Motion Sensor');
-      setTimeout(function() {
-        this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
-        this.motionTriggered = false;
-      }.bind(this), this.motionTime);
-    }
-  }.bind(this), this.delay);
-}
-
-const timerOff = () => {
-  this.switchOn = false;
-  clearTimeout(this.timer);
-  this.motionTriggered = false;
-  if (this.sensor) this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
-}
-
-
 delaySwitch.prototype.setOn = function (on, callback) {
 
   if (on) {
     this.log(`Timer started`);
-    timerOn.bind(this)();
+    this.switchOn = true;
+    clearTimeout(this.timer);
+    this.timer = setTimeout(function() {
+      this.log('Timer finished');
+      this.switchService.getCharacteristic(Characteristic.On).updateValue(false);
+      this.switchOn = false;
+
+      if (this.sensor) {
+        this.motionTriggered = true;
+        this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(true);
+        this.log('Triggering Motion Sensor');
+        setTimeout(function() {
+          this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
+          this.motionTriggered = false;
+        }.bind(this), this.motionTime);
+      }
+    }.bind(this), this.delay);
     callback();
     return;
   }
 
   this.log(`Timer stopped`);
-  timerOff.bind(this)();
+  this.switchOn = false;
+  clearTimeout(this.timer);
+  this.motionTriggered = false;
+  if (this.sensor) this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
   callback();
 }
 
