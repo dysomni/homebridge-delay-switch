@@ -20,11 +20,18 @@
                 "default": 5000,
                 "required": true
             },
-            "disableSensor": {
-                "title": "Disable Extra Motion Sensor",
-                "description": "Enable if you have no use of the sensor and you're interested to use the switch only",
+            "motionTime": {
+              "title": "Motion Time in Milliseconds",
+              "description": "Amount of time in milliseconds to trigger motion",
+              "type": "integer",
+              "default": 3000,
+              "required": false
+          },
+            "sensor": {
+                "title": "Enable Extra Motion Sensor",
+                "description": "Disable if you have no use of the sensor and you're interested to use the switch only",
                 "type": "boolean",
-                "default": false,
+                "default": true,
                 "required": false
             },
             "startOnReboot": {
