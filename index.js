@@ -54,8 +54,8 @@ delaySwitch.prototype.getServices = function () {
   return services;
 }
 
+//TODO: refactor this out into different methods keeping in mind 'this'
 delaySwitch.prototype.setOn = function (on, callback) {
-
   if (on) {
     this.log(`Timer started`);
     this.switchOn = true;
