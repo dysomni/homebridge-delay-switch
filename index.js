@@ -45,14 +45,11 @@ delaySwitch.prototype.getServices = function () {
 
   var services = [informationService, this.switchService]
 
-  if (this.sensor){
-    this.motionService = new Service.MotionSensor(this.name + ' Trigger');
-
-    this.motionService
+  this.motionService = new Service.MotionSensor(this.name + ' trigger');
+  this.motionService
     .getCharacteristic(Characteristic.MotionDetected)
     .on('get', this.getMotion.bind(this));
-    services.push(this.motionService)
-  }
+  services.push(this.motionService)
 
   return services;
 }
