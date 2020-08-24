@@ -65,8 +65,10 @@ delaySwitch.prototype.setOn = function (on, callback) {
     clearTimeout(this.timer);
     this.timer = setTimeout(function() {
       this.log('Timer finished');
-      this.switchService.getCharacteristic(Characteristic.On).updateValue(false);
-      this.switchOn = false;
+      setTimeout(function() {
+        this.switchService.getCharacteristic(Characteristic.On).updateValue(false);
+        this.switchOn = false;
+      }.bind(this), this.motionTime + 3000)
 
       if (this.sensor) {
         this.motionTriggered = true;
