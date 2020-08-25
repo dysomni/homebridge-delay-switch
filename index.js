@@ -82,12 +82,11 @@ function triggerMotion(count=0) {
   count += 1;
   setTimeout(function() {
     this.motionTriggered = isOdd(count);
+    this.log(`Turning Motion Sensor ${this.motionTriggered ? 'On' : 'Off'}`)
     this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(this.motionTriggered);
-    if(this.motionTriggered)
-      this.log('Triggering Motion Sensor');
   }.bind(this), this.motionTime * count);
   if(count < (this.motionCount*2))
-    triggerMotion(count);
+    triggerMotion.bind(this)(count);
 }
 
 function isOdd(n) {
