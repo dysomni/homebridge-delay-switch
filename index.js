@@ -64,14 +64,7 @@ delaySwitch.prototype.setOn = function (on, callback) {
       this.switchOn = false;
       this.switchService.getCharacteristic(Characteristic.On).updateValue(this.switchOn);
       this.log('Timer finished');
-      for(var i = 0; i < this.motionCount * 2; i++) {
-        setTimeout(function() {
-          this.motionTriggered = isEven(i);
-          this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(this.motionTriggered);
-          if(this.motionTriggered)
-            this.log('Triggering Motion Sensor');
-        }.bind(this), this.motionTime * i);
-      }
+      triggerMotion.bind(this)();
     }.bind(this), this.delay);
     callback();
     return;
@@ -85,8 +78,20 @@ delaySwitch.prototype.setOn = function (on, callback) {
   callback();
 }
 
-function isEven(n) {
-  return n % 2 == 0;
+function triggerMotion(count=0) {
+  count += 1;
+  setTimeout(function() {
+    this.motionTriggered = isOdd(i);
+    this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(this.motionTriggered);
+    if(this.motionTriggered)
+      this.log('Triggering Motion Sensor');
+  }.bind(this), this.motionTime * count);
+  if(count < (this.motionCount*2))
+    triggerMotion(count);
+}
+
+function isOdd(n) {
+  return n % 2 != 0;
 }
 
 delaySwitch.prototype.getOn = function (callback) {
