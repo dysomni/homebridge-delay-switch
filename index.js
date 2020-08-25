@@ -64,7 +64,7 @@ delaySwitch.prototype.setOn = function (on, callback) {
       this.switchOn = false;
       this.switchService.getCharacteristic(Characteristic.On).updateValue(this.switchOn);
       this.log('Timer finished');
-      for(var i = 0; i < motionCount * 2; i++) {
+      for(var i = 0; i < this.motionCount * 2; i++) {
         setTimeout(function() {
           this.motionTriggered = isEven(i);
           this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(this.motionTriggered);
