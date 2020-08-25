@@ -15,9 +15,9 @@ function delaySwitch(log, config, api) {
   this.log              = log;
   this.name             = config['name'];
   this.delay            = config['delay'];
-  this.motionTime       = config['motionTime'] || 3000;
-  // this.sensor           = config['sensor'] || true;
+  this.motionTime       = config['motionTime']    || 10 * 1000;
   this.startOnReboot    = config['startOnReboot'] || true;
+  this.motionCount      = config['motionCount']   || 1;
   this.timer;
   this.switchOn         = false;
   this.motionTriggered  = false;
@@ -61,16 +61,17 @@ delaySwitch.prototype.setOn = function (on, callback) {
     this.switchOn = true;
     clearTimeout(this.timer);
     this.timer = setTimeout(function() {
-      this.motionTriggered = true;
-      this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(true);
-      this.log('Triggering Motion Sensor');
-      setTimeout(function() {
-        this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(false);
-        this.motionTriggered = false;
-        this.switchService.getCharacteristic(Characteristic.On).updateValue(false);
-        this.switchOn = false;
-        this.log('Timer finished');
-      }.bind(this), this.motionTime);
+      this.switchOn = false;
+      this.switchService.getCharacteristic(Characteristic.On).updateValue(this.switchOn);
+      this.log('Timer finished');
+      for(var i = 0; i < motionCount * 2; i++) {
+        setTimeout(function() {
+          this.motionTriggered = isEven(i);
+          this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(this.motionTriggered);
+          if(this.motionTriggered)
+            this.log('Triggering Motion Sensor');
+        }.bind(this), this.motionTime * i);
+      }
     }.bind(this), this.delay);
     callback();
     return;
@@ -84,7 +85,9 @@ delaySwitch.prototype.setOn = function (on, callback) {
   callback();
 }
 
-
+function isEven(n) {
+  return n % 2 == 0;
+}
 
 delaySwitch.prototype.getOn = function (callback) {
   callback(null, this.switchOn);
