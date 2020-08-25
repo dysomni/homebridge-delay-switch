@@ -81,7 +81,7 @@ delaySwitch.prototype.setOn = function (on, callback) {
 function triggerMotion(count=0) {
   count += 1;
   setTimeout(function() {
-    this.motionTriggered = isOdd(i);
+    this.motionTriggered = isOdd(count);
     this.motionService.getCharacteristic(Characteristic.MotionDetected).updateValue(this.motionTriggered);
     if(this.motionTriggered)
       this.log('Triggering Motion Sensor');
